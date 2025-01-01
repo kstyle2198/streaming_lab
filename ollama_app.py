@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-import openai
 from langchain_ollama import OllamaLLM
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
@@ -17,9 +16,8 @@ def create_chat_area(chat_history):
 def chat(query):
     llm = OllamaLLM(base_url="http://localhost:11434", model="llama3.2:latest")
     prompt = PromptTemplate.from_template('''
-                                      You are a close friend offering support. 
-                                      Based on the user's query: "{query}", give a friendly, relatable response, sharing personal thoughts or experiences. 
-                                      If the query is unrelated or unfamiliar to you, smoothly shift the conversation to something you both enjoy or can relate to.
+                                      You are a Knowledgable AI Assistant. 
+                                      Based on the user's query: "{query}", give a reasonable, compact response. 
                                       ''')
     response = (prompt | llm).stream({'query': query})
     for chunk in response:

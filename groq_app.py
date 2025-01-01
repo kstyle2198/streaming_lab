@@ -12,8 +12,33 @@ def create_chat_area(chat_history):
             st.write(chat['content'])
 
 # Generate chat responses using the OpenAI API
-def chat(messages, max_tokens, temperature=1, n=1, model="llama-3.3-70b-versatile", stream=False):
+def chat(query, max_tokens, temperature=1, n=1, model="llama-3.3-70b-versatile", stream=False):
     client = Groq()
+    messages=[
+
+        # Set an optional system message. This sets the behavior of the
+        # assistant and can be used to provide specific instructions for
+        # how it should behave throughout the conversation.
+
+        {
+
+            "role": "system",
+
+            "content": "you are a Knowledgable AI Assistant. Generate a reasonable and compact answer to the question. and Generate the answer in Korean (Han-gul)"
+
+        },
+
+        # Set a user message for the assistant to respond to.
+
+        {
+
+            "role": "user",
+
+            "content": f"{query}",
+
+        }
+
+    ]
     completion = client.chat.completions.create(
         model=model,
         messages=messages,
