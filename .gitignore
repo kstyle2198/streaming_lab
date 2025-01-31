@@ -2,3 +2,5 @@
 .env
 poetry.lock
 pyproject.toml
+db
+data

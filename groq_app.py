@@ -12,7 +12,7 @@ def create_chat_area(chat_history):
             st.write(chat['content'])
 
 # Generate chat responses using the OpenAI API
-def chat(query, max_tokens, temperature=1, n=1, model="llama-3.3-70b-versatile", stream=False):
+def chat(query, max_tokens, temperature=1, n=1, model="deepseek-r1-distill-llama-70b", stream=False):
     client = Groq()
     messages=[
 
@@ -58,6 +58,7 @@ def main():
     # Streamlit settings
     st.markdown("""<style>.block-container{max-width: 66rem !important;}</style>""", unsafe_allow_html=True)
     st.title("Groq Streamlit Streaming Demo")
+    st.markdown("#### Deepseek-r1-distill-llama-70b")
     st.markdown('---')
 
     # Session state initialization
@@ -88,7 +89,7 @@ def run_chat_interface():
 def process_user_input(user_input):
     if user_input:
         st.session_state.chat_history.append({"role": "user", "content": user_input})
-        gpt_answer = chat(st.session_state.chat_history, 1000, model="llama-3.1-70b-versatile", stream=True)
+        gpt_answer = chat(st.session_state.chat_history, 1000, model="deepseek-r1-distill-llama-70b", stream=True)  ## 메모리 기능 포함됨
         st.session_state.generator = gpt_answer
         st.session_state.streaming = True
         st.session_state.chat_history.append({"role": "assistant", "content": ''})

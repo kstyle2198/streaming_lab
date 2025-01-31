@@ -14,7 +14,7 @@ def create_chat_area(chat_history):
 
 # Generate chat responses using the OpenAI API
 def chat(query):
-    llm = OllamaLLM(base_url="http://localhost:11434", model="llama3.2:latest")
+    llm = OllamaLLM(base_url="http://localhost:11434", model="deepseek-r1:8b")
     prompt = PromptTemplate.from_template('''
                                       You are a Knowledgable AI Assistant. 
                                       Based on the user's query: "{query}", give a reasonable, compact response. 
@@ -31,6 +31,7 @@ def main():
     # Streamlit settings
     st.markdown("""<style>.block-container{max-width: 66rem !important;}</style>""", unsafe_allow_html=True)
     st.title("Ollama Streamlit Streaming Demo")
+    st.markdown("#### deepseek-r1:8b")
     st.markdown('---')
 
     # Session state initialization
@@ -61,7 +62,7 @@ def run_chat_interface():
 def process_user_input(user_input):
     if user_input:
         st.session_state.chat_history.append({"role": "user", "content": user_input})
-        gpt_answer = chat(st.session_state.chat_history)
+        gpt_answer = chat(st.session_state.chat_history)    ## 메모리 기능 포함됨
         st.session_state.generator = gpt_answer
         st.session_state.streaming = True
         st.session_state.chat_history.append({"role": "assistant", "content": ''})
