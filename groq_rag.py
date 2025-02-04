@@ -11,14 +11,14 @@ def create_chat_area(chat_history):
         with st.chat_message(role):
             st.write(chat['content'])
 
-    with st.expander("Retrieval Docs", expanded=True):
+    with st.expander("Retrieval Docs", expanded=False):
         for doc in st.session_state.retrieval_docs:
-            with st.container(border=True):
+            with st.container(border=True, height=200):
                 doc
 
 
 # Generate chat responses using the OpenAI API
-def rag(query, retrieval_docs, max_tokens, temperature=1, n=1, model="deepseek-r1-distill-llama-70b", stream=False):
+def rag(query, retrieval_docs, max_tokens, temperature=0, n=1, model="deepseek-r1-distill-llama-70b", stream=False):
     """
     A Retrieval-Augmented Generation (RAG) function that generates responses 
     based on the query and the retrieved documents.
@@ -41,11 +41,17 @@ def rag(query, retrieval_docs, max_tokens, temperature=1, n=1, model="deepseek-r
     retrieval_docs = [doc.page_content for doc in retrieval_docs]
     context = "\n".join(retrieval_docs)
 
+    system_prompt = """
+    You are a knowledgeable AI assistant. 
+    Generate a reasonable and compact answer to the question, leveraging the provided context. 
+    Generate the answer in Korean (Han-gul).
+    """
+
     # Messages for the chat completion
     messages = [
         {
             "role": "system",
-            "content": "You are a knowledgeable AI assistant. Generate a reasonable and compact answer to the question, leveraging the provided context. Generate the answer in Korean (Han-gul)."
+            "content": system_prompt
         },
         {
             "role": "system",
@@ -85,7 +91,7 @@ from langchain_ollama import OllamaEmbeddings
 def main():
     # Streamlit settings
     st.markdown("""<style>.block-container{max-width: 66rem !important;}</style>""", unsafe_allow_html=True)
-    st.title("Groq Streamlit Streaming RAG")
+    st.title("Reasoning RAG Agent Demo")
     st.markdown("#### Deepseek-r1-distill-llama-70b")
     st.markdown('---')
 
@@ -135,10 +141,6 @@ def main():
 
     run_chat_interface()
 
-
-
-
-
 def make_retriever_from_pdf(pdf):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     docs = text_splitter.split_documents(pdf)
@@ -154,10 +156,6 @@ def run_chat_interface():
     # Chat controls
     clear_button = st.button("Clear Chat History") if len(st.session_state.chat_history) > 0 else None
     user_input = st.chat_input("Ask something:")
-
-
-
-    
 
     # Clear chat history
     if clear_button:
@@ -181,10 +179,12 @@ def process_user_input(user_input, retriever1):
     else:
         update_assistant_response()
 
+import time
 def update_assistant_response():
     try:
         chunk = next(st.session_state.generator)
         st.session_state.chat_history[-1]["content"] += chunk
+        time.sleep(0.05)
         st.rerun()
     except StopIteration:
         st.session_state.streaming = False

@@ -12,7 +12,7 @@ def create_chat_area(chat_history):
             st.write(chat['content'])
 
 # Generate chat responses using the OpenAI API
-def chat(query, max_tokens, temperature=1, n=1, model="deepseek-r1-distill-llama-70b", stream=False):
+def chat(query, max_tokens, temperature=0.1, n=1, model="deepseek-r1-distill-llama-70b", stream=False):
     client = Groq()
     messages=[
 
