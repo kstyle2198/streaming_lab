@@ -24,7 +24,8 @@ def configure_retriever(uploaded_files):
     docs = []
     temp_dir = tempfile.TemporaryDirectory()
     for file in uploaded_files:
-        temp_filepath = os.path.join(temp_dir.name, file.name)
+        temp_filepath = os.path.join(temp_dir.name, file.name)  # 본인 PC 로컬 경로에 저장된다.
+        st.info(temp_filepath)
         with open(temp_filepath, "wb") as f:
             f.write(file.getvalue())
         loader = PyPDFLoader(temp_filepath)
@@ -93,9 +94,7 @@ memory = ConversationBufferMemory(memory_key="chat_history", chat_memory=msgs, r
 
 # Setup LLM and QA chain
 llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0, streaming=True)   # "llama-3.3-70b-versatile"  "deepseek-r1-distill-llama-70b"
-qa_chain = ConversationalRetrievalChain.from_llm(
-    llm, retriever=retriever, memory=memory, verbose=True
-)
+qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever=retriever, memory=memory, verbose=True)
 
 if len(msgs.messages) == 0 or st.sidebar.button("Clear message history"):
     msgs.clear()
@@ -109,6 +108,7 @@ for msg in msgs.messages:
 system_prompt = """You are Knowledgable Shipbuiling Engineer. 
 Think Step by Step to answer the question.
 Generate your answer including its reason.(quote the original sentences from the context)
+Do Not repeat same setences in your answer.
 and You MUST generate the answer in Korean (Han-gul)."""
 
 if user_query := st.chat_input(placeholder="Ask me anything!"):
